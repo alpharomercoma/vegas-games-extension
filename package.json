@@ -1,0 +1,147 @@
+{
+  "name": "vegas-casino-games",
+  "displayName": "Vegas Casino Games",
+  "description": "Play classic Vegas casino games right in VS Code - Blackjack, Texas Hold'em Poker, Baccarat, Slots, Roulette, and Pai Gow Poker. For fun only!",
+  "version": "1.0.0",
+  "author": "Alpha Romer Coma <alpharomercoma@proton.me>",
+  "publisher": "vegas-casino-games",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "games",
+    "casino",
+    "blackjack",
+    "poker",
+    "roulette",
+    "slots",
+    "baccarat"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "icon": "media/icons/icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vegasCasinoGames.openPanel",
+        "title": "Open Vegas Casino Games",
+        "category": "Vegas Casino Games",
+        "icon": "$(game)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vegas-casino-games",
+          "title": "Vegas Casino Games",
+          "icon": "media/icons/casino.svg"
+        }
+      ]
+    },
+    "views": {
+      "vegas-casino-games": [
+        {
+          "type": "webview",
+          "id": "vegasCasinoGames.sidebar",
+          "name": "Casino Lobby"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Vegas Casino Games",
+      "properties": {
+        "vegasCasinoGames.soundEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable sound effects"
+        },
+        "vegasCasinoGames.musicEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable or disable background music"
+        },
+        "vegasCasinoGames.volume": {
+          "type": "number",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Master volume (0-100)"
+        },
+        "vegasCasinoGames.startingBalance": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 100,
+          "maximum": 100000,
+          "description": "Starting chip balance for new games"
+        },
+        "vegasCasinoGames.rouletteType": {
+          "type": "string",
+          "default": "european",
+          "enum": [
+            "european",
+            "american"
+          ],
+          "enumDescriptions": [
+            "European Roulette (single zero)",
+            "American Roulette (double zero)"
+          ],
+          "description": "Roulette wheel type"
+        },
+        "vegasCasinoGames.blackjackDecks": {
+          "type": "number",
+          "default": 6,
+          "enum": [
+            1,
+            2,
+            4,
+            6,
+            8
+          ],
+          "description": "Number of decks used in Blackjack"
+        },
+        "vegasCasinoGames.pokerDifficulty": {
+          "type": "string",
+          "default": "normal",
+          "enum": [
+            "easy",
+            "normal",
+            "hard"
+          ],
+          "description": "AI difficulty for Texas Hold'em"
+        },
+        "vegasCasinoGames.theme": {
+          "type": "string",
+          "default": "classic",
+          "enum": [
+            "classic",
+            "neon",
+            "dark"
+          ],
+          "enumDescriptions": [
+            "Classic casino green felt",
+            "Neon Vegas lights",
+            "Dark luxury theme"
+          ],
+          "description": "Visual theme for the games"
+        },
+        "vegasCasinoGames.autoSaveBalance": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save chip balance between sessions"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.0.0"
+  }
+}
