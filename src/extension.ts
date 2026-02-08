@@ -1,19 +1,19 @@
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-  const sidebarProvider = new CasinoWebviewProvider(context, 'sidebar');
+  const sidebarProvider = new GamesWebviewProvider(context, 'sidebar');
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider('vegasCasinoGames.sidebar', sidebarProvider, {
+    vscode.window.registerWebviewViewProvider('vegasGames.sidebar', sidebarProvider, {
       webviewOptions: { retainContextWhenHidden: true }
     })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('vegasCasinoGames.openPanel', () => {
+    vscode.commands.registerCommand('vegasGames.openPanel', () => {
       const panel = vscode.window.createWebviewPanel(
-        'vegasCasinoGames.panel',
-        'Vegas Casino Games',
+        'vegasGames.panel',
+        'Vegas Games',
         vscode.ViewColumn.One,
         {
           enableScripts: true,
@@ -21,14 +21,14 @@ export function activate(context: vscode.ExtensionContext) {
           localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
         }
       );
-      panel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'icons', 'casino.svg');
+      panel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'icons', 'games.svg');
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri, context);
       setupWebviewMessageHandler(panel.webview, context);
     })
   );
 }
 
-class CasinoWebviewProvider implements vscode.WebviewViewProvider {
+class GamesWebviewProvider implements vscode.WebviewViewProvider {
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly viewType: string
@@ -48,7 +48,7 @@ function setupWebviewMessageHandler(webview: vscode.Webview, context: vscode.Ext
   webview.onDidReceiveMessage(async (message) => {
     switch (message.type) {
       case 'getSettings': {
-        const config = vscode.workspace.getConfiguration('vegasCasinoGames');
+        const config = vscode.workspace.getConfiguration('vegasGames');
         webview.postMessage({
           type: 'settings',
           data: {
@@ -66,12 +66,12 @@ function setupWebviewMessageHandler(webview: vscode.Webview, context: vscode.Ext
         break;
       }
       case 'saveBalance': {
-        await context.globalState.update('vegasCasinoGames.balance', message.data);
+        await context.globalState.update('vegasGames.balance', message.data);
         break;
       }
       case 'getBalance': {
-        const balance = context.globalState.get<number>('vegasCasinoGames.balance');
-        const config = vscode.workspace.getConfiguration('vegasCasinoGames');
+        const balance = context.globalState.get<number>('vegasGames.balance');
+        const config = vscode.workspace.getConfiguration('vegasGames');
         webview.postMessage({
           type: 'balance',
           data: balance ?? config.get('startingBalance', 1000)
@@ -79,9 +79,9 @@ function setupWebviewMessageHandler(webview: vscode.Webview, context: vscode.Ext
         break;
       }
       case 'resetBalance': {
-        const config = vscode.workspace.getConfiguration('vegasCasinoGames');
+        const config = vscode.workspace.getConfiguration('vegasGames');
         const starting = config.get('startingBalance', 1000);
-        await context.globalState.update('vegasCasinoGames.balance', starting);
+        await context.globalState.update('vegasGames.balance', starting);
         webview.postMessage({ type: 'balance', data: starting });
         break;
       }
@@ -121,13 +121,13 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri, co
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}'; font-src ${webview.cspSource}; img-src ${webview.cspSource} data:;">
   <link rel="stylesheet" href="${cssUri}">
-  <title>Vegas Casino Games</title>
+  <title>Vegas Games</title>
 </head>
 <body>
   <!-- LOBBY -->
   <div id="screen-lobby" class="screen active">
     <div class="lobby-header">
-      <h1 class="lobby-title">VEGAS CASINO</h1>
+      <h1 class="lobby-title">VEGAS</h1>
       <p class="lobby-subtitle">GAMES</p>
       <div class="balance-display" id="lobby-balance">
         <span class="balance-label">CHIPS</span>
@@ -195,7 +195,7 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri, co
       <div class="setting-group">
         <label class="setting-label">Theme</label>
         <select id="setting-theme" class="setting-select">
-          <option value="classic">Classic Casino</option>
+          <option value="classic">Classic</option>
           <option value="neon">Neon Vegas</option>
           <option value="dark">Dark Luxury</option>
         </select>

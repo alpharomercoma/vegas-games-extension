@@ -1,10 +1,10 @@
 {
-  "name": "vegas-casino-games",
-  "displayName": "Vegas Casino Games",
-  "description": "Play classic Vegas casino games right in VS Code - Blackjack, Texas Hold'em Poker, Baccarat, Slots, Roulette, and Pai Gow Poker. For fun only!",
+  "name": "vegas-games",
+  "displayName": "Vegas Games",
+  "description": "Play classic Vegas games right in VS Code - Blackjack, Texas Hold'em Poker, Baccarat, Slots, Roulette, and Pai Gow Poker. For fun only!",
   "version": "1.0.0",
   "author": "Alpha Romer Coma <alpharomercoma@proton.me>",
-  "publisher": "vegas-casino-games",
+  "publisher": "vegas-games",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -13,7 +13,6 @@
   ],
   "keywords": [
     "games",
-    "casino",
     "blackjack",
     "poker",
     "roulette",
@@ -26,58 +25,58 @@
   "contributes": {
     "commands": [
       {
-        "command": "vegasCasinoGames.openPanel",
-        "title": "Open Vegas Casino Games",
-        "category": "Vegas Casino Games",
+        "command": "vegasGames.openPanel",
+        "title": "Open Vegas Games",
+        "category": "Vegas Games",
         "icon": "$(game)"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "vegas-casino-games",
-          "title": "Vegas Casino Games",
-          "icon": "media/icons/casino.svg"
+          "id": "vegas-games",
+          "title": "Vegas Games",
+          "icon": "media/icons/games.svg"
         }
       ]
     },
     "views": {
-      "vegas-casino-games": [
+      "vegas-games": [
         {
           "type": "webview",
-          "id": "vegasCasinoGames.sidebar",
-          "name": "Casino Lobby"
+          "id": "vegasGames.sidebar",
+          "name": "Games Lobby"
         }
       ]
     },
     "configuration": {
-      "title": "Vegas Casino Games",
+      "title": "Vegas Games",
       "properties": {
-        "vegasCasinoGames.soundEnabled": {
+        "vegasGames.soundEnabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable or disable sound effects"
         },
-        "vegasCasinoGames.musicEnabled": {
+        "vegasGames.musicEnabled": {
           "type": "boolean",
           "default": false,
           "description": "Enable or disable background music"
         },
-        "vegasCasinoGames.volume": {
+        "vegasGames.volume": {
           "type": "number",
           "default": 50,
           "minimum": 0,
           "maximum": 100,
           "description": "Master volume (0-100)"
         },
-        "vegasCasinoGames.startingBalance": {
+        "vegasGames.startingBalance": {
           "type": "number",
           "default": 1000,
           "minimum": 100,
           "maximum": 100000,
           "description": "Starting chip balance for new games"
         },
-        "vegasCasinoGames.rouletteType": {
+        "vegasGames.rouletteType": {
           "type": "string",
           "default": "european",
           "enum": [
@@ -90,7 +89,7 @@
           ],
           "description": "Roulette wheel type"
         },
-        "vegasCasinoGames.blackjackDecks": {
+        "vegasGames.blackjackDecks": {
           "type": "number",
           "default": 6,
           "enum": [
@@ -102,7 +101,7 @@
           ],
           "description": "Number of decks used in Blackjack"
         },
-        "vegasCasinoGames.pokerDifficulty": {
+        "vegasGames.pokerDifficulty": {
           "type": "string",
           "default": "normal",
           "enum": [
@@ -112,7 +111,7 @@
           ],
           "description": "AI difficulty for Texas Hold'em"
         },
-        "vegasCasinoGames.theme": {
+        "vegasGames.theme": {
           "type": "string",
           "default": "classic",
           "enum": [
@@ -121,13 +120,13 @@
             "dark"
           ],
           "enumDescriptions": [
-            "Classic casino green felt",
+            "Classic green felt",
             "Neon Vegas lights",
             "Dark luxury theme"
           ],
           "description": "Visual theme for the games"
         },
-        "vegasCasinoGames.autoSaveBalance": {
+        "vegasGames.autoSaveBalance": {
           "type": "boolean",
           "default": true,
           "description": "Automatically save chip balance between sessions"
