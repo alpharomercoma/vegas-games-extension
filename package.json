@@ -4,7 +4,11 @@
   "description": "Play classic Vegas games right in VS Code - Blackjack, Texas Hold'em Poker, Baccarat, Slots, Roulette, and Pai Gow Poker. For fun only!",
   "version": "1.0.0",
   "author": "Alpha Romer Coma <alpharomercoma@proton.me>",
-  "publisher": "vegas-games",
+  "publisher": "alpharomercoma",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alpharomercoma/vegas-games-extension"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
