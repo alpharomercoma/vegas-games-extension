@@ -348,13 +348,13 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri, co
     <div class="baccarat-table">
       <div class="bacc-hands">
         <div class="bacc-hand-area">
-          <div class="hand-label bacc-banker-label">BANKER <span id="bacc-banker-score"></span></div>
-          <div class="card-hand" id="bacc-banker-hand"></div>
+          <div class="hand-label bacc-player-label">PLAYER <span id="bacc-player-score"></span></div>
+          <div class="card-hand" id="bacc-player-hand"></div>
         </div>
         <div class="bacc-vs">VS</div>
         <div class="bacc-hand-area">
-          <div class="hand-label bacc-player-label">PLAYER <span id="bacc-player-score"></span></div>
-          <div class="card-hand" id="bacc-player-hand"></div>
+          <div class="hand-label bacc-banker-label">BANKER <span id="bacc-banker-score"></span></div>
+          <div class="card-hand" id="bacc-banker-hand"></div>
         </div>
       </div>
       <div class="bacc-status" id="bacc-status"></div>

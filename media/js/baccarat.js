@@ -267,8 +267,13 @@
 
     document.getElementById('bacc-player-hand').innerHTML = '';
     document.getElementById('bacc-banker-hand').innerHTML = '';
+    document.getElementById('bacc-player-score').textContent = '';
+    document.getElementById('bacc-banker-score').textContent = '';
     document.getElementById('bacc-status').textContent = '';
     document.getElementById('bacc-result-controls').classList.add('hidden');
+    document.getElementById('bacc-bet-zones').style.pointerEvents = '';
+    document.getElementById('bacc-deal').disabled = false;
+    document.getElementById('bacc-clear').disabled = false;
 
     // Zone selection
     document.querySelectorAll('.bacc-zone').forEach(zone => {

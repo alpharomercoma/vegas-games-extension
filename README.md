@@ -56,17 +56,32 @@ Press `F5` in VS Code to launch an Extension Development Host with the extension
 ### Project Structure
 
 ```
-src/extension.ts        Extension entry point and webview setup
-media/js/blackjack.js   Blackjack game logic
-media/js/poker.js       Texas Hold'em game logic
-media/js/baccarat.js    Baccarat game logic
-media/js/slots.js       Slots game logic
-media/js/roulette.js    Roulette game logic
-media/js/paigow.js      Pai Gow Poker game logic
-media/js/audio.js       Sound effects (Web Audio API)
-media/js/main.js        Lobby, navigation, and balance management
-media/css/main.css      All styles
+vegas-games-extension/
+├── package.json           Extension manifest
+├── tsconfig.json          TypeScript config
+├── src/
+│   └── extension.ts       Extension entry point, webview provider, HTML shell
+├── out/
+│   ├── extension.js       Compiled output (main entry)
+│   └── extension.js.map   Source map → src/extension.ts
+└── media/
+    ├── css/
+    │   └── main.css       All styles
+    ├── icons/
+    │   ├── icon.png       Extension icon (256×256)
+    │   └── games.svg      Activity bar icon
+    └── js/
+        ├── main.js       Lobby, navigation, balance, settings
+        ├── audio.js      Sound effects (Web Audio API)
+        ├── blackjack.js  Blackjack game logic
+        ├── poker.js      Texas Hold'em Poker game logic
+        ├── baccarat.js   Baccarat game logic
+        ├── slots.js      Slots game logic
+        ├── roulette.js   Roulette game logic
+        └── paigow.js     Pai Gow Poker game logic
 ```
+
+**Source maps:** `out/extension.js.map` maps `extension.js` back to `src/extension.ts`. Paths in the map are relative to the map file (`../src/extension.ts`).
 
 ## Author
 
