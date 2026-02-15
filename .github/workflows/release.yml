@@ -1,0 +1,142 @@
+# Publish VS Code extension to Visual Studio Marketplace and Open VSX when a release is published or a version tag is pushed.
+# Package once, then publish to both registries in parallel. Version in package.json is synced from the tag (e.g. v0.1.2 → 0.1.2).
+
+name: Release & Publish Extension
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    # Allows triggering from Bump Version (gh workflow run) or manually with a tag ref
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package extension
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Resolve version from tag
+        id: version
+        env:
+          TAG_RELEASE: ${{ github.event.release.tag_name }}
+          TAG_REF: ${{ github.ref_name }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "release" ]; then
+            TAG="$TAG_RELEASE"
+          else
+            # push (tag) or workflow_dispatch (use ref, e.g. v0.1.2)
+            TAG="$TAG_REF"
+          fi
+          VERSION="${TAG#v}"
+
+          # Validate semver format (MAJOR.MINOR.PATCH)
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Invalid version '$VERSION' — expected semver (e.g. 1.2.3)"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $VERSION"
+
+      - name: Set version in package.json
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          node -e "
+            const p = require('./package.json');
+            p.version = process.env.VERSION;
+            require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
+          "
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Package extension (VSIX)
+        run: npx @vscode/vsce package --no-dependencies
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: vsix
+          path: classic-card-table-games-${{ steps.version.outputs.version }}.vsix
+          if-no-files-found: error
+          retention-days: 3
+
+  publish-vscode:
+    name: Publish to VS Code Marketplace
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify VS Marketplace token
+        env:
+          VSCE_PAT: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "::error::VS_MARKETPLACE_TOKEN secret is not set"
+            exit 1
+          fi
+
+      - name: Download VSIX
+        uses: actions/download-artifact@v7
+        with:
+          name: vsix
+
+      - name: Publish to Visual Studio Marketplace
+        uses: HaaLeo/publish-vscode-extension@v2
+        with:
+          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+          registryUrl: https://marketplace.visualstudio.com
+          extensionFile: classic-card-table-games-${{ needs.package.outputs.version }}.vsix
+          skipDuplicate: true
+
+  publish-openvsx:
+    name: Publish to Open VSX Registry
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Open VSX token
+        env:
+          OVSX_PAT: ${{ secrets.OPEN_VSX_TOKEN }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "::error::OPEN_VSX_TOKEN secret is not set"
+            exit 1
+          fi
+
+      - name: Download VSIX
+        uses: actions/download-artifact@v7
+        with:
+          name: vsix
+
+      - name: Publish to Open VSX Registry
+        uses: HaaLeo/publish-vscode-extension@v2
+        with:
+          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+          extensionFile: classic-card-table-games-${{ needs.package.outputs.version }}.vsix
+          skipDuplicate: true

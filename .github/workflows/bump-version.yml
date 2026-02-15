@@ -1,0 +1,82 @@
+# Bump package version and create a git tag. Pushing the tag triggers the release workflow to publish.
+# Run manually from the Actions tab (Run workflow) and choose patch | minor | major.
+
+name: Bump Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  bump:
+    name: Bump version and create tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Bump version
+        id: bump
+        env:
+          BUMP_TYPE: ${{ inputs.bump }}
+        run: |
+          npm version "$BUMP_TYPE" --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+
+          # Validate the bumped version
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::npm version produced invalid semver: '$VERSION'"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Bumped to $VERSION"
+
+      - name: Commit and push version
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git diff --cached --quiet && { echo "::error::No changes to commit"; exit 1; }
+          git commit -m "chore: bump version to $VERSION"
+          git push
+
+      - name: Create GitHub Release (creates tag automatically)
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${VERSION}" \
+            --target "${{ github.ref_name }}" \
+            --generate-notes
+
+      # Tag pushes from GITHUB_TOKEN do not trigger other workflows, so we trigger release explicitly
+      - name: Trigger Release & Publish Extension
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run "Release & Publish Extension" --ref "v${VERSION}"
