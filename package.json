@@ -2,7 +2,7 @@
   "name": "classic-card-table-games",
   "displayName": "Classic Card & Table Games",
   "description": "Play classic Vegas games right in VS Code - Blackjack, Texas Hold'em Poker, Baccarat, Slots, Roulette, and Pai Gow Poker. For fun only!",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Alpha Romer Coma <alpharomercoma@proton.me>",
   "publisher": "alpharomercoma",
   "repository": {
